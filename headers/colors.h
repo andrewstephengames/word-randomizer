@@ -3,7 +3,7 @@
 #endif
 
 //constants
-#define WORD_COUNT 255
+#define WORD_COUNT 50
 #define MAX_LEN 20
 #define PI 3.1415926535897
 

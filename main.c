@@ -64,20 +64,22 @@ int main (int argc, char **argv)
      size_t randSize = 0, inputSignal = 0, outputSignal = 0;
      size_t commentSignal = 0, colorSignal = 1, appendSignal = 0;
      char outputFilename[255] = "", inputFilename[255] = "";
-     char words[WORD_COUNT][MAX_LEN];
-     FILE *in = fopen ("words.txt", "r"), *out;
+     char nouns[WORD_COUNT][MAX_LEN], verbs[WORD_COUNT][MAX_LEN], words[WORD_COUNT][MAX_LEN];
+     FILE *nounFile= fopen ("nouns.txt", "r"), *out, *in, *verbFile = fopen ("verbs.txt", "r");
      while ((argc > 1) && (argv[1][0] == '-'))
      {
           switch (argv[1][1])
           {
                case 'i':
-                    //output in a user defined file
+                    //user defined input file
                     //FIXME: stat mechanism
                     inputSignal = 1;
                     struct stat buffer;
                     size_t status;
                     if (stat(strcat("./", argv[3]), &buffer))
                          printf ("%s\n", argv[3]);
+                    strcpy (inputFilename, argv[3]);
+                    in = fopen (inputFilename, "r");
                     status = stat(strcat ("./", argv[3]), &buffer);
                     assert (status == 0 && "We're sorry, but there is no such file in the current directory. Please check your files or nag the dev to fix it if you consider the Program is at fault.");
                     break;
@@ -138,7 +140,15 @@ int main (int argc, char **argv)
           in = fopen (inputFilename, "r");
      }
      for (size_t i = 0; i < WORD_COUNT; i++)
-          fscanf (in, "%s", words[i]);
+     {
+          if (strlen (inputFilename))
+               fscanf (in, "%s", words[i]);
+          else
+          {
+               fscanf (nounFile, "%s", nouns[i]);
+               fscanf (verbFile, "%s", verbs[i]);
+          }
+     }
      if (strlen (outputFilename) == 0)
           strcpy (outputFilename, "stdout");
      if (outputSignal)
@@ -156,13 +166,17 @@ int main (int argc, char **argv)
                          if (words[rand()%WORD_COUNT][0] == '#')
                          {
                               if (commentSignal)
-                                   fprintf (out, "%s ", words[rand()%WORD_COUNT]+1);
+                                   if (strlen (inputFilename))
+                                        fprintf (out, "%s ", words[rand()%WORD_COUNT]+1);
+                                   else fprintf (out, "%s %s.\n", nouns[rand()%WORD_COUNT]+1, verbs[rand()%WORD_COUNT]+1);
                               else continue;
                               //printf ("\n%s\n", outputFilename);
                          }
                          else 
                          {
-                              fprintf (out, "%s ", words[rand()%WORD_COUNT]);
+                              if (strlen (inputFilename))
+                                   fprintf (out, "%s ", words[rand()%WORD_COUNT]);
+                              else fprintf (out, "%s %s.\n ", nouns[rand()%WORD_COUNT], verbs[rand()%WORD_COUNT]);
                               //printf ("\n%s\n", outputFilename);
                          }
                }
@@ -174,7 +188,9 @@ int main (int argc, char **argv)
                               {
                                    if (colorSignal)
                                         printf (colors[rand()%16]);
-                                   fprintf (stdout, "%s ", words[rand()%WORD_COUNT]+1);
+                                   if (strlen (inputFilename))
+                                        fprintf (stdout, "%s ", words[rand()%WORD_COUNT]+1);
+                                   else fprintf (stdout, "%s %s.\n ", nouns[rand()%WORD_COUNT]+1, verbs[rand()%WORD_COUNT]+1);
                               }
                               else continue;
                               //printf ("\n%s\n", outputFilename);
@@ -183,7 +199,9 @@ int main (int argc, char **argv)
                          {
                               if (colorSignal)
                                    printf (colors[rand()%16]);
-                              fprintf (stdout, "%s ", words[rand()%WORD_COUNT]);
+                              if (strlen (inputFilename))
+                                   fprintf (stdout, "%s ", words[rand()%WORD_COUNT]);
+                              else fprintf (stdout, "%s %s.\n ", nouns[rand()%WORD_COUNT], verbs[rand()%WORD_COUNT]);
                               //printf ("\n%s\n", outputFilename);
                          }
                }
@@ -199,7 +217,9 @@ int main (int argc, char **argv)
                          {
                               if (colorSignal)
                                    printf (colors[rand()%16]);
-                              fprintf (stdout, "%s ", words[rand()%WORD_COUNT]+1);
+                              if (strlen(inputFilename))
+                                   fprintf (stdout, "%s ", words[rand()%WORD_COUNT]+1);
+                              else fprintf (stdout, "%s %s.\n ", nouns[rand()%WORD_COUNT]+1, verbs[rand()%WORD_COUNT]+1);
                          }
                          else continue;
                     }
@@ -208,19 +228,25 @@ int main (int argc, char **argv)
                          //printf ("\n%s\n", outputFilename);
                          if (colorSignal)
                               printf (colors[rand()%16]);
-                         fprintf (stdout, "%s ", words[rand()%WORD_COUNT]);
+                         if (strlen (inputFilename))
+                              fprintf (stdout, "%s ", words[rand()%WORD_COUNT]);
+                         else fprintf (stdout, "%s %s.\n ", nouns[rand()%WORD_COUNT], verbs[rand()%WORD_COUNT]);
                     }
                }
                else 
                {
                     if (words[rand()%WORD_COUNT][0] == '#')
                          if (commentSignal)
-                              fprintf (out, "%s ", words[rand()%WORD_COUNT]+1);
+                              if (strlen (inputFilename))
+                                   fprintf (stdout, "%s ", words[rand()%WORD_COUNT]+1);
+                              else fprintf (stdout, "%s %s.\n ", nouns[rand()%WORD_COUNT]+1, verbs[rand()%WORD_COUNT]+1);
                          else continue;
                     else 
                     {
                          //printf ("\n%s\n", outputFilename);
-                         fprintf (out, "%s ", words[rand()%WORD_COUNT]);
+                         if (strlen (inputFilename))
+                              fprintf (out, "%s ", words[rand()%WORD_COUNT]);
+                         else fprintf (out, "%s %s.\n ", nouns[rand()%WORD_COUNT], verbs[rand()%WORD_COUNT]);
                     }
                }
      }
@@ -231,6 +257,9 @@ int main (int argc, char **argv)
           fprintf (out, "\n");
           fclose (out);
      }
-     fclose (in);
+     fclose (nounFile);
+     fclose (verbFile);
+     if (strlen(inputFilename)) fclose (in);
+     if (strlen(outputFilename)) fclose (out);
      return 0;
 }
