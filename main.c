@@ -146,6 +146,7 @@ int main (int argc, char **argv)
           else
           {
                fscanf (nounFile, "%s", nouns[i]);
+               nouns[i][0] += 'A' - 'a';
                fscanf (verbFile, "%s", verbs[i]);
           }
      }
