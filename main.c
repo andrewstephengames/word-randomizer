@@ -79,7 +79,9 @@ int main (int argc, char **argv)
                     if (stat(strcat("./", argv[3]), &buffer))
                          printf ("%s\n", argv[3]);
                     strcpy (inputFilename, argv[3]);
-                    in = fopen (inputFilename, "r");
+                    if (strlen (argv[3]))
+                         in = fopen (inputFilename, "r");
+                    else in = fopen ("test", "r");
                     status = stat(strcat ("./", argv[3]), &buffer);
                     assert (status == 0 && "We're sorry, but there is no such file in the current directory. Please check your files or nag the dev to fix it if you consider the Program is at fault.");
                     break;
@@ -137,7 +139,6 @@ int main (int argc, char **argv)
                     "Please input a valid filename!\n");
           assert (strlen (inputFilename) > 255 &&
                     "Please input a filename of smaller size!\n");
-          in = fopen (inputFilename, "r");
      }
      for (size_t i = 0; i < WORD_COUNT; i++)
      {
