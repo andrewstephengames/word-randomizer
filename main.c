@@ -34,9 +34,7 @@
 #include <sys/stat.h>
 #include "colors.h"
 
-
 //FIXME: 100: assertion execution
-//FIXME: Segmentation fault when choosing input file in spite of it being created.
 //FIXME: text file does not have 500 lines
 //TODO: Fix output in custom file with multiple switches
 
@@ -90,7 +88,7 @@ int main (int argc, char **argv)
                          in = fopen (inputFilename, "r");
                     else in = fopen ("test", "r");
                     status = stat(strcat ("./", argv[3]), &buffer);
-                    assert (status == 0 && "We're sorry, but there is no such file in the current directory. Please check your files or nag the dev to fix it if you consider the Program is at fault.");
+                    assert (status == 0 && "No such file or directory");
                     break;
                case 'o':
                     //output in a user defined file
@@ -149,12 +147,12 @@ int main (int argc, char **argv)
      }
      for (size_t i = 0; i < WORD_COUNT; i++)
      {
-          if (strlen (inputFilename) > 0)
+          if (strlen (inputFilename) != 0)
                fscanf (in, "%s", words[i]);
           else
           {
                fscanf (nounFile, "%s", nouns[i]);
-               nouns[i][0] += 'A' - 'a';
+               //nouns[i][0] += 'A' - 'a';
                fscanf (verbFile, "%s", verbs[i]);
           }
      }
@@ -268,7 +266,7 @@ int main (int argc, char **argv)
      }
      fclose (nounFile);
      fclose (verbFile);
-     if (strlen(inputFilename)) fclose (in);
-     if (strlen(outputFilename)) fclose (out);
+     //if (strlen(inputFilename)) fclose (in);
+     //if (strlen(outputFilename)) fclose (out);
      return 0;
 }
