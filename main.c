@@ -26,7 +26,14 @@
      harder to use due to how the command line is handled there.
 */
 
-#include "headers/main.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <assert.h>
+#include <sys/stat.h>
+#include "colors.h"
+
 
 //FIXME: 100: assertion execution
 //FIXME: Segmentation fault when choosing input file in spite of it being created.
@@ -142,7 +149,7 @@ int main (int argc, char **argv)
      }
      for (size_t i = 0; i < WORD_COUNT; i++)
      {
-          if (strlen (inputFilename))
+          if (strlen (inputFilename) > 0)
                fscanf (in, "%s", words[i]);
           else
           {
